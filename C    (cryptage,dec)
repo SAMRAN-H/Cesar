@@ -1,0 +1,138 @@
+#include<conio.h>
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+void warning (void);
+void error (void);
+
+int main(int argc,char *argv[]) /* ex :  fh decrypto  crypto.txt cle.txt     donne :  nomcrypt = crypto.txt, nomcle = cle.txt*/
+{
+    char *nomcrypt, *nomcle, *nomresult;
+    char *crypto ,*decrypto, *motcle, *falsemotcle ;
+    FILE *crypt, *cle, *result;
+    char bidule [2000];
+    int i=0,j, rep;
+    int choix, nombre;
+    char c='0';
+
+    if(argc!=1 && argc !=3)
+    {
+        printf("Nombre d'arguments errone !.\nFin du programme.");
+        exit(1);
+    }
+
+    if(argc==3)
+        strcpy(bidule,argv[1]);
+
+    else
+    {
+        printf("Donnez le nom du fichier ou est contenu le resultat : ");
+        gets(bidule);
+    }
+
+    if(!(nomcrypt = (char *) malloc (strlen(bidule))))
+        warning();
+    strcpy(nomcrypt,bidule);
+
+    if(!(crypt=fopen(nomcrypt, "r")))
+        error();
+
+    fseek(crypt, 42, 0);
+    while((c= fgetc(crypt)) != EOF)
+        i++;
+
+    fseek(crypt, 42, 0);
+    fgets(bidule, ++i, crypt);
+    if(!(crypto = (char *) malloc (strlen(bidule))))
+        warning();
+    if(!(decrypto = (char *) malloc (strlen(bidule))))
+        warning();
+    strcpy(crypto,bidule);
+    fclose(crypt);
+
+    if(argc==3)
+       strcpy(bidule,argv[2]);
+
+    else
+    {
+        printf("Donnez le nom du fichier ou est contenue la cle : ");
+        gets(bidule);
+    }
+
+    if(!(nomcle = (char *) malloc (strlen(bidule))))
+        warning();
+    strcpy(nomcle,bidule);
+    if(!(cle=fopen(nomcle, "r")))
+        error();
+
+    fseek(cle,39,0);
+    fscanf(cle,"%d", &choix);
+
+    switch(choix)
+    {
+    case 1: fseek(cle,85,0);
+            fscanf(cle,"%d", &nombre);
+
+            for(i=0;crypto[i]!='\0';decrypto[i] = (crypto[i] - nombre)%256,i++)
+                ;
+            break;
+    case 2: fseek(cle, 83, 0);
+            i=0;
+            while((c= fgetc(cle)) != EOF)
+                i++;
+            fseek(cle, 83, 0);
+            fgets(bidule, ++i, cle);
+            fclose(cle);
+
+            if(!(falsemotcle = (char *) malloc (strlen(bidule))))
+                warning();
+            strcpy(falsemotcle, bidule);
+
+            if(!(motcle = (char *) malloc (strlen(crypto))))
+                warning();
+            for(i=0,j=0;strlen(motcle) <strlen(crypto);motcle[j] = bidule[i], j++,i++)
+                if(i == strlen(bidule) )
+                    i=0;
+
+            for(i=0;crypto[i]!='\0';decrypto[i] = (crypto[i] - motcle[i])%256,i++)
+                ;
+            break;
+    default: printf("\nErreur dans le fichier !. Fin du programme.");
+             exit(1);
+    }
+    printf("\n\n\nResultat du decryptage = %s", decrypto);
+
+    printf("\n\n\nVoulez enregistrer le resultat du decryptage dans un fichier (o/n) ?");
+    if((rep = getch()) == 'o')
+    {
+        getchar();
+        printf("Donnez le nom du fichier ou vous voulez enregistrer le resultat : ");
+        gets(bidule);
+        if(!(nomresult = (char *) malloc (strlen(bidule))))
+            warning();
+        strcpy(nomresult, bidule);
+        if(!(result=fopen(nomresult, "w")))
+            error();
+        fprintf(result, "Resultat du decryptage. Le resultat est = \n%s", decrypto);
+        fclose(result);
+        printf("Resultat enregistre dans %s\n", nomresult);
+    }
+    printf("Fin du programme");
+    getchar();
+
+}
+
+void warning(void)
+{
+    printf("\n\tAllocation memoire impossible !!\nFin du programme.");
+    getchar();
+    exit(1);
+}
+void error(void)
+{
+    printf("\n\tErreur d'ouverture du fichier.\nFin du programme.");
+    getchar();
+    exit(1);
+}
