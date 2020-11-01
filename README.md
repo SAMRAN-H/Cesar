@@ -4,6 +4,10 @@
 # Пример работы программы
 -открытьскриншоты указаны.
 
+![Crypter decrypter](https://user-images.githubusercontent.com/73785628/97816132-d77e4600-1cb4-11eb-97a4-7c6a2f0e7eb1.png)
+![scren](https://user-images.githubusercontent.com/73785628/97816134-da793680-1cb4-11eb-93c4-1f811b775765.png)
+
+
 
  # Как пользоваться программой
 Открыть файл     в программе 
